@@ -1,4 +1,4 @@
-* own note taking framework
+* note taking framework
 :PROPERTIES:
 :DATE:     <2014-10-14 Tue 18:47>
 :ID:       D2E016DB-670B-4FD9-90C2-3A43C84C7123
@@ -585,4 +585,10 @@
             (list 'file+datetree (concat iz-log-dir "projects/FINANCE.org"))
             "* %^{title}\n :PROPERTIES:\n :DATE:\t%T\n :END:\n%^{TransactionType}p%^{category}p%^{amount}p\n%?\n"
             ))))
+#+END_SRC
+
+* Provide package org-notes
+
+#+BEGIN_SRC emacs-lisp
+(provide 'org-notes)
 #+END_SRC
