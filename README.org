@@ -1,0 +1,13 @@
+A framework for taking notes with Org-mode, in multiple files and multiple folders, under one main folder.
+
+Developed in November 2014, tested with 6 months intense use.
+
+Originally included in my emacs init-file.  Here saved as separate library.
+
+El-get recipe:
+
+#+BEGIN_SRC elisp
+(:name org-pm :url "http://github.com/iani/org-notes.git" :type git :features
+       (org-pm)
+       :after nil)
+#+END_SRC
