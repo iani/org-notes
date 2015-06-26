@@ -582,11 +582,30 @@ of iz-log-dir."
 (defun superdeft ()
   "Open Deft with a folder selected from the notes directory."
   (interactive)
-  (let ((folder (iz-select-folder)))
-    (if (get-buffer  "*Deft*") (kill-buffer "*Deft*"))
-    (setq deft-directory (concat iz-log-dir folder))
+  (let ((path (concat iz-log-dir (iz-select-folder))))
+    (when (and
+         (get-buffer  "*Deft*")
+         (not (equal deft-directory path)))
+      (kill-buffer "*Deft*")
+      (setq deft-directory path))
     (deft)))
 
+(defun deft-log ()
+  "Capture datetree log entry in current deft file."
+  (interactive)
+  (if (get-buffer "*Deft*")
+    (deft)
+    (superdeft))
+  (let ((file (widget-get (widget-at) :tag)))
+    (when file
+      (setq org-capture-templates
+            (list
+             (list
+              "l" "log" 'entry (list 'file+datetree+prompt file)
+              "* %?\n :PROPERTIES:\n :DATE:\t%^T\n :END:\n\n%i\n")))
+      (org-capture))))
+
 (global-set-key (kbd "C-S-s") 'superdeft)
+(global-set-key (kbd "C-S-l") 'deft-log)
 
 (provide 'org-notes)
