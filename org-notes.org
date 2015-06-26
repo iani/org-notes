@@ -597,7 +597,7 @@
       (setq deft-directory (concat iz-log-dir folder))
       (deft)))
 
-  (global-set-key (kbd "C-S-s") 'superdeftf)
+  (global-set-key (kbd "C-S-s") 'superdeft)
 #+END_SRC
 
 
