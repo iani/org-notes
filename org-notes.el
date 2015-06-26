@@ -584,7 +584,9 @@ of iz-log-dir."
   (interactive)
   (let ((folder (iz-select-folder)))
     (if (get-buffer  "*Deft*") (kill-buffer "*Deft*"))
-    (setq deft-directory folder)
+    (setq deft-directory (concat iz-log-dir folder))
     (deft)))
+
+(global-set-key (kbd "C-S-s") 'superdeft)
 
 (provide 'org-notes)
