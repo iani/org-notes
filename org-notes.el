@@ -11,7 +11,7 @@
         ("erasmus" . ?E)
         ("researchfunding" . ?r)))
 
-(defvar iz-log-dir
+(defcustom iz-log-dir
   (expand-file-name
    "~/Copy/000WORKFILES/")
   "This directory contains all notes on current projects and classes")
@@ -578,5 +578,13 @@ of iz-log-dir."
           (list 'file+datetree (concat iz-log-dir "projects/FINANCE.org"))
           "* %^{title}\n :PROPERTIES:\n :DATE:\t%T\n :END:\n%^{TransactionType}p%^{category}p%^{amount}p\n%?\n"
           ))))
+
+(defun superdeft ()
+  "Open Deft with a folder selected from the notes directory."
+  (interactive)
+  (let ((folder (iz-select-folder)))
+    (if (get-buffer  "*Deft*") (kill-buffer "*Deft*"))
+    (setq deft-directory folder)
+    (deft)))
 
 (provide 'org-notes)
