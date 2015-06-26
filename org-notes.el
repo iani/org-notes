@@ -586,8 +586,8 @@ of iz-log-dir."
     (when (and
          (get-buffer  "*Deft*")
          (not (equal deft-directory path)))
-      (kill-buffer "*Deft*")
-      (setq deft-directory path))
+      (kill-buffer "*Deft*"))
+    (setq deft-directory path)
     (deft)))
 
 (defun deft-log ()
