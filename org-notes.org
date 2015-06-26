@@ -18,7 +18,7 @@
           ("erasmus" . ?E)
           ("researchfunding" . ?r)))
 
-  (defvar iz-log-dir
+  (defcustom iz-log-dir
     (expand-file-name
      "~/Copy/000WORKFILES/")
     "This directory contains all notes on current projects and classes")
@@ -586,6 +586,18 @@
             "* %^{title}\n :PROPERTIES:\n :DATE:\t%T\n :END:\n%^{TransactionType}p%^{category}p%^{amount}p\n%?\n"
             ))))
 #+END_SRC
+* Using deft
+
+#+BEGIN_SRC emacs-lisp
+  (defun superdeft ()
+    "Open Deft with a folder selected from the notes directory."
+    (interactive)
+    (let ((folder (iz-select-folder)))
+      (if (get-buffer  "*Deft*") (kill-buffer "*Deft*"))
+      (setq deft-directory folder)
+      (deft)))
+#+END_SRC
+
 
 * Provide package org-notes
 
