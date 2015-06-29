@@ -168,7 +168,7 @@
          notes-buffer
        (org-map-entries
         (lambda ()
-          (let* ((timestamp (org-entry-get (point) "DATE"))
+          (let* ((timestam]p (org-entry-get (point) "DATE"))
                  (date
                  (calendar-gregorian-from-absolute
                   (org-time-string-to-absolute timestamp))))
@@ -613,6 +613,14 @@
               (list
                (list
                 "l" "log" 'entry (list 'file+datetree+prompt file)
+                "* %?\n :PROPERTIES:\n :DATE:\t%^T\n :END:\n\n%i\n")
+               (list
+                "d" "diary" 'entry (list 'file+datetree+prompt
+                                         (concat iz-log-dir "0_PRIVATE/DIARY.org"))
+                "* %?\n :PROPERTIES:\n :DATE:\t%^T\n :END:\n\n%i\n")
+               (list
+                "s" "sudel" 'entry (list 'file+datetree+prompt
+                                         (concat iz-log-dir "6_WEBSITES-ORG/SUDEL.org"))
                 "* %?\n :PROPERTIES:\n :DATE:\t%^T\n :END:\n\n%i\n")))
         (org-capture))))
 
