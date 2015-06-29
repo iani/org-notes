@@ -93,7 +93,7 @@ If USE-LAST-SELECTED is not nil, refile to last selected refile target."
     (org-datetree-find-date-create date)
     (move-end-of-line nil)
     (open-line 1)
-    (next-line)
+    (forward-line)
     (org-paste-subtree 4)
     (save-buffer)
     (find-file origin-filename)))
@@ -102,7 +102,7 @@ If USE-LAST-SELECTED is not nil, refile to last selected refile target."
   "Get time from mobile-entry and put it in DATE property."
   (interactive)
   (org-back-to-heading 1)
-  (next-line 1)
+  (forward-line 1)
   (let ((time (cadr (org-element-timestamp-parser))))
     (org-entry-put nil "DATE" (plist-get time :raw-value)))
   (outline-next-heading))
@@ -134,7 +134,7 @@ from-mobile.org, to wait for next pull operation."
             (org-datetree-find-date-create date)
             (move-end-of-line nil)
             (open-line 1)
-            (next-line)
+            (forward-line)
             (org-paste-subtree 4)
             (org-set-property "DATE" (concat "<" timestamp ">"))
             (org-set-tags-to ":mobileorg:"))))))
@@ -171,7 +171,7 @@ in the log file under date-tree."
             (org-datetree-find-date-create date)
             (move-end-of-line nil)
             (open-line 1)
-            (next-line)
+            (forward-line)
             (org-paste-subtree 4)
             (org-set-property "DATE" (concat "<" timestamp ">")))))))
    (copy-file
@@ -191,16 +191,6 @@ in the log file under date-tree."
 
 (defun iz-select-file-from-folders ()
   (iz-org-file-menu (iz-select-folder)))
-
-(defun iz-select-folder ()
-  (let*
-      ((folders (-select 'file-directory-p
-                         (file-expand-wildcards
-                          (concat iz-log-dir "*"))))
-       (folder-menu (grizzl-make-index
-                     (mapcar 'file-name-nondirectory folders)))
-       (folder (grizzl-completing-read "Select folder:" folder-menu)))
-    folder))
 
 (defun iz-org-file-menu (subdir)
   (let*
@@ -387,6 +377,16 @@ of iz-log-dir."
   (interactive "P")
   (iz-make-log-capture-templates (iz-select-folder))
   (org-capture goto))
+
+;; (defun iz-select-folder ()
+;;   (let*
+;;       ((folders (-select 'file-directory-p
+;;                          (file-expand-wildcards
+;;                           (concat iz-log-dir "*"))))
+;;        (folder-menu (grizzl-make-index
+;;                      (mapcar 'file-name-nondirectory folders)))
+;;        (folder (grizzl-completing-read "Select folder:" folder-menu)))
+;;     folder))
 
 (defun iz-select-folder ()
   (let*
@@ -602,6 +602,14 @@ of iz-log-dir."
             (list
              (list
               "l" "log" 'entry (list 'file+datetree+prompt file)
+              "* %?\n :PROPERTIES:\n :DATE:\t%^T\n :END:\n\n%i\n")
+             (list
+              "d" "diary" 'entry (list 'file+datetree+prompt
+                                       (concat iz-log-dir "0_PRIVATE/DIARY.org"))
+              "* %?\n :PROPERTIES:\n :DATE:\t%^T\n :END:\n\n%i\n")
+             (list
+              "s" "sudel" 'entry (list 'file+datetree+prompt
+                                       (concat iz-log-dir "6_WEBSITES-ORG/SUDEL.org"))
               "* %?\n :PROPERTIES:\n :DATE:\t%^T\n :END:\n\n%i\n")))
       (org-capture))))
 
