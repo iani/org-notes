@@ -601,7 +601,10 @@ of iz-log-dir."
       (setq org-capture-templates
             (list
              (list
-              "l" "log (on deft-selected file)" 'entry (list 'file+datetree+prompt file)
+              "l"
+              (format "log: %s" (file-name-sans-extension
+                                 (file-name-nondirectory file)))
+              'entry (list 'file+datetree+prompt file)
               "* %?\n :PROPERTIES:\n :DATE:\t%^T\n :END:\n\n%i\n")
              (list
               "d" "diary" 'entry (list 'file+datetree+prompt
