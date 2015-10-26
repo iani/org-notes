@@ -628,6 +628,7 @@
         (org-capture))))
 
   (global-set-key (kbd "C-S-s") 'superdeft)
+  (global-set-key (kbd "C-S-d") 'superdeft)
   (global-set-key (kbd "C-S-l") 'deft-log)
 
 
