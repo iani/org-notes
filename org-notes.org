@@ -20,7 +20,7 @@
 
   (defcustom iz-log-dir
     (expand-file-name
-     "~/Copy/000WORKFILES/")
+     "~/MEGA/000WORKFILES/")
     "This directory contains all notes on current projects and classes")
 
   (setq diary-file (concat iz-log-dir "PRIVATE/diary"))
@@ -607,33 +607,35 @@
     (if (get-buffer "*Deft*")
       (deft)
       (superdeft))
-    (let ((file (widget-get (widget-at) :tag)))
-      (when file
-        (setq org-capture-templates
-              (list
-               (list
-                "l"
-                (format "log: %s" (file-name-sans-extension
-                                   (file-name-nondirectory file)))
-                'entry (list 'file+datetree+prompt file)
-                "* %?\n :PROPERTIES:\n :DATE:\t%^T\n :END:\n\n%i\n")
-               (list
-                "d" "diary" 'entry (list 'file+datetree+prompt
-                                         (concat iz-log-dir "0_PRIVATE/DIARY.org"))
-                "* %?\n :PROPERTIES:\n :DATE:\t%^T\n :END:\n\n%i\n")
-               (list
-                "s" "sudel" 'entry (list 'file+datetree+prompt
-                                         (concat iz-log-dir "6_WEBSITES-ORG/SUDEL.org"))
-                "* %?\n :PROPERTIES:\n :DATE:\t%^T\n :END:\n\n%i\n")))
-        (org-capture))))
+     (org-log-here (widget-get (widget-at) :tag)))
 
+  (defun org-log-here (file)
+    "Create org-capture entry with date in FILE."
+    (when file
+      (setq org-capture-templates
+            (list
+             (list
+              "l"
+              (format "log: %s" (file-name-sans-extension
+                                 (file-name-nondirectory file)))
+              'entry (list 'file+datetree+prompt file)
+              "* %?\n :PROPERTIES:\n :DATE:\t%^T\n :END:\n\n%i\n")
+             (list
+              "d" "diary" 'entry
+              (list 'file+datetree+prompt
+                    (concat iz-log-dir "0_PRIVATE/DIARY.org"))
+              "* %?\n :PROPERTIES:\n :DATE:\t%^T\n :END:\n\n%i\n")
+             (list
+              "s" "sudel" 'entry
+              (list 'file+datetree+prompt
+                    (concat iz-log-dir "6_WEBSITES-ORG/SUDEL.org"))
+              "* %?\n :PROPERTIES:\n :DATE:\t%^T\n :END:\n\n%i\n")))
+      (org-capture)))
   (global-set-key (kbd "C-S-s") 'superdeft)
   (global-set-key (kbd "C-S-d") 'superdeft)
   (global-set-key (kbd "C-S-l") 'deft-log)
 
-
 #+END_SRC
-
 
 * Provide package org-notes
 

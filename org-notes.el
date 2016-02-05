@@ -13,32 +13,32 @@
 
 (defcustom iz-log-dir
   (expand-file-name
-   "~/Copy/000WORKFILES/")
+   "~/MEGA/000WORKFILES/")
   "This directory contains all notes on current projects and classes")
 
 (setq diary-file (concat iz-log-dir "PRIVATE/diary"))
 
-;; (defadvice org-agenda (before update-agenda-file-list ())
-;;   "Re-createlist of agenda files from contents of relevant directories."
-;;   (iz-update-agenda-file-list)
-;;   (icicle-mode 1))
+(defadvice org-agenda (before update-agenda-file-list ())
+  "Re-createlist of agenda files from contents of relevant directories."
+  (iz-update-agenda-file-list)
+  (icicle-mode 1))
 
-;; (defadvice org-agenda (after turn-icicles-off ())
-;;   "Turn off icicle mode since it interferes with some other keyboard shortcuts."
-;;   (icicle-mode -1))
+(defadvice org-agenda (after turn-icicles-off ())
+  "Turn off icicle mode since it interferes with some other keyboard shortcuts."
+  (icicle-mode -1))
 
-;; (ad-activate 'org-agenda)
+(ad-activate 'org-agenda)
 
-;; (defadvice org-refile (before turn-icicles-on-for-refile ())
-;;   "Turn on icicles before running org-refile.
-;; Note: This piece of advice needs checking! Maybe not valid."
-;;   (icicle-mode 1))
+(defadvice org-refile (before turn-icicles-on-for-refile ())
+  "Turn on icicles before running org-refile.
+Note: This piece of advice needs checking! Maybe not valid."
+  (icicle-mode 1))
 
-;; (defadvice org-refile (after turn-icicles-off-for-refile ())
-;;   "Turn off icicle mode since it interferes with some other keyboard shortcuts."
-;;   (icicle-mode -1))
+(defadvice org-refile (after turn-icicles-off-for-refile ())
+  "Turn off icicle mode since it interferes with some other keyboard shortcuts."
+  (icicle-mode -1))
 
-;; (ad-activate 'org-refile)
+(ad-activate 'org-refile)
 
 (defun iz-diary-entry ()
   "Go to or create diary entry for date entered interactively."
@@ -85,7 +85,7 @@ If USE-LAST-SELECTED is not nil, refile to last selected refile target."
         (date (calendar-gregorian-from-absolute
                (org-time-string-to-absolute
                 (or (org-entry-get (point) "CLOSED")
-                    (org-entry-get (point) "DATE"))))))
+                 (org-entry-get (point) "DATE"))))))
     (org-cut-subtree)
     (if (and iz-last-selected-file use-last-selected)
         (find-file iz-last-selected-file)
@@ -115,75 +115,75 @@ After finishing the refile operation, save a copy of the
 processed file with a timestamp, and erase the contents of
 from-mobile.org, to wait for next pull operation."
   (interactive)
-  (org-mobile-pull)
-  (let* ((mobile-file (file-truename "~/org/from-mobile.org"))
-         (mobile-buffer (find-file mobile-file))
-         (log-buffer (find-file (concat iz-log-dir "0_PRIVATE/DIARY.org"))))
-    (with-current-buffer
-        mobile-buffer
-      (org-map-entries
-       (lambda ()
-         (let* ((timestamp
-                 (cdr (assoc "TIMESTAMP_IA" (org-entry-properties))))
-                (date
-                 (calendar-gregorian-from-absolute
-                  (org-time-string-to-absolute timestamp))))
-           (org-copy-subtree)
-           (with-current-buffer
-               log-buffer
-             (org-datetree-find-date-create date)
-             (move-end-of-line nil)
-             (open-line 1)
-             (forward-line)
-             (org-paste-subtree 4)
-             (org-set-property "DATE" (concat "<" timestamp ">"))
-             (org-set-tags-to ":mobileorg:"))))))
-    (copy-file
-     mobile-file
-     (concat
-      (file-name-sans-extension mobile-file)
-      (format-time-string "%Y-%m-%d-%H-%M-%S")
-      ".org"))
-    (with-current-buffer
-        mobile-buffer
-      (erase-buffer)
-      (save-buffer))))
+ (org-mobile-pull)
+ (let* ((mobile-file (file-truename "~/org/from-mobile.org"))
+        (mobile-buffer (find-file mobile-file))
+        (log-buffer (find-file (concat iz-log-dir "0_PRIVATE/DIARY.org"))))
+   (with-current-buffer
+       mobile-buffer
+     (org-map-entries
+      (lambda ()
+        (let* ((timestamp
+                (cdr (assoc "TIMESTAMP_IA" (org-entry-properties))))
+               (date
+                (calendar-gregorian-from-absolute
+                 (org-time-string-to-absolute timestamp))))
+          (org-copy-subtree)
+          (with-current-buffer
+              log-buffer
+            (org-datetree-find-date-create date)
+            (move-end-of-line nil)
+            (open-line 1)
+            (forward-line)
+            (org-paste-subtree 4)
+            (org-set-property "DATE" (concat "<" timestamp ">"))
+            (org-set-tags-to ":mobileorg:"))))))
+   (copy-file
+    mobile-file
+    (concat
+     (file-name-sans-extension mobile-file)
+     (format-time-string "%Y-%m-%d-%H-%M-%S")
+     ".org"))
+   (with-current-buffer
+       mobile-buffer
+     (erase-buffer)
+     (save-buffer))))
 
 (defun iz-refile-notes-to-log ()
   "Refile notes entered from terminal with quick-entry to log file.
 Get date from DATE property of entry and use it to refile the entry
 in the log file under date-tree."
   (interactive)
-  (let* ((notes-file (concat iz-log-dir "0_INBOX/notes.org"))
-         (notes-buffer (find-file notes-file))
-         (log-buffer (find-file (concat iz-log-dir "0_PRIVATE/DIARY.org"))))
-    (with-current-buffer
-        notes-buffer
-      (org-map-entries
-       (lambda ()
-         (let* ((timestamp (org-entry-get (point) "DATE"))
-                (date
-                 (calendar-gregorian-from-absolute
-                  (org-time-string-to-absolute timestamp))))
-           (org-copy-subtree)
-           (with-current-buffer
-               log-buffer
-             (org-datetree-find-date-create date)
-             (move-end-of-line nil)
-             (open-line 1)
-             (forward-line)
-             (org-paste-subtree 4)
-             (org-set-property "DATE" (concat "<" timestamp ">")))))))
-    (copy-file
-     notes-file
-     (concat
-      (file-name-sans-extension notes-file)
-      (format-time-string "%Y-%m-%d-%H-%M-%S")
-      ".org"))
-    (with-current-buffer
-        notes-buffer
-      (erase-buffer)
-      (save-buffer))))
+ (let* ((notes-file (concat iz-log-dir "0_INBOX/notes.org"))
+        (notes-buffer (find-file notes-file))
+        (log-buffer (find-file (concat iz-log-dir "0_PRIVATE/DIARY.org"))))
+   (with-current-buffer
+       notes-buffer
+     (org-map-entries
+      (lambda ()
+        (let* ((timestamp (org-entry-get (point) "DATE"))
+               (date
+               (calendar-gregorian-from-absolute
+                (org-time-string-to-absolute timestamp))))
+          (org-copy-subtree)
+          (with-current-buffer
+              log-buffer
+            (org-datetree-find-date-create date)
+            (move-end-of-line nil)
+            (open-line 1)
+            (forward-line)
+            (org-paste-subtree 4)
+            (org-set-property "DATE" (concat "<" timestamp ">")))))))
+   (copy-file
+    notes-file
+    (concat
+     (file-name-sans-extension notes-file)
+     (format-time-string "%Y-%m-%d-%H-%M-%S")
+     ".org"))
+   (with-current-buffer
+       notes-buffer
+     (erase-buffer)
+     (save-buffer))))
 
 (defun iz-insert-file-as-snippet ()
   (interactive)
@@ -201,7 +201,7 @@ in the log file under date-tree."
        (dirs
         (mapcar (lambda (dir)
                   (cons (file-name-sans-extension
-                         (file-name-nondirectory dir)) dir))
+                                (file-name-nondirectory dir)) dir))
                 files))
        (project-menu (grizzl-make-index projects))
        (selection (cdr (assoc (grizzl-completing-read "Select file: " project-menu)
@@ -331,7 +331,7 @@ of iz-log-dir."
            (cdr (assoc selection entries))))
       (if (eq major-mode 'org-agenda-mode)
           (org-agenda-capture)
-        (org-capture goto)))))
+       (org-capture goto)))))
 
 (defun iz-helm-ack ()
   (interactive)
@@ -353,14 +353,14 @@ of iz-log-dir."
                        (directory-file-name
                         (file-name-directory temp-path)))
                       "/"
-                      (file-name-sans-extension (file-name-nondirectory temp-path))
-                      ;; (car capt-template) "-" (cadr capt-template)
-                      )))
+                     (file-name-sans-extension (file-name-nondirectory temp-path))
+                     ;; (car capt-template) "-" (cadr capt-template)
+                     )))
     (setq iz-capture-template-history
           (-take 20
-                 (cons (cons key capt-template)
-                       (-reject (lambda (x) (equal key (car x)))
-                                iz-capture-template-history)))))
+          (cons (cons key capt-template)
+                (-reject (lambda (x) (equal key (car x)))
+                         iz-capture-template-history)))))
   (dump-vars-to-file
    '(iz-capture-template-history)
    iz-capture-template-history-file)
@@ -466,27 +466,27 @@ of iz-log-dir."
 
 (defun iz-make-todo-capture-templates (subdir)
   "Make capture templates for project files"
-  (setq org-capture-templates
-        (setq org-capture-templates
-              (let* (
-                     (files
-                      (file-expand-wildcards
-                       (concat iz-log-dir subdir "/[a-zA-Z0-9]*.org")))
-                     (projects (mapcar 'file-name-nondirectory files))
-                     (dirs
-                      (mapcar (lambda (dir) (cons (file-name-sans-extension
-                                                   (file-name-nondirectory dir))
-                                                  dir))
-                              files)))
-                (-map-indexed
-                 (lambda (index item)
-                   (list
-                    (substring iz-capture-keycodes index (+ 1 index))
-                    (car item)
-                    'entry
-                    (list 'file+headline (cdr item) "TODOs")
-                    "* TODO %?\n :PROPERTIES:\n :DATE:\t%U\n :END:\n\n%i\n"))
-                 dirs)))))
+ (setq org-capture-templates
+       (setq org-capture-templates
+             (let* (
+                    (files
+                     (file-expand-wildcards
+                      (concat iz-log-dir subdir "/[a-zA-Z0-9]*.org")))
+                    (projects (mapcar 'file-name-nondirectory files))
+                    (dirs
+                     (mapcar (lambda (dir) (cons (file-name-sans-extension
+                                                  (file-name-nondirectory dir))
+                                                 dir))
+                             files)))
+               (-map-indexed
+                (lambda (index item)
+                  (list
+                   (substring iz-capture-keycodes index (+ 1 index))
+                   (car item)
+                   'entry
+                   (list 'file+headline (cdr item) "TODOs")
+                   "* TODO %?\n :PROPERTIES:\n :DATE:\t%U\n :END:\n\n%i\n"))
+                dirs)))))
 
 (defun iz-goto (&optional level)
   (interactive "P")
@@ -504,7 +504,7 @@ of iz-log-dir."
 
 (defun iz-org-file-command-menu ()
   "Menu of commands operating on iz org files."
-  (interactive)
+(interactive)
   (let* ((menu (grizzl-make-index
                 '(
                   "iz-log"
@@ -584,8 +584,8 @@ of iz-log-dir."
   (interactive)
   (let ((path (concat iz-log-dir (iz-select-folder))))
     (when (and
-           (get-buffer  "*Deft*")
-           (not (equal deft-directory path)))
+         (get-buffer  "*Deft*")
+         (not (equal deft-directory path)))
       (kill-buffer "*Deft*"))
     (setq deft-directory path)
     (deft)))
@@ -594,42 +594,34 @@ of iz-log-dir."
   "Capture datetree log entry in current deft file."
   (interactive)
   (if (get-buffer "*Deft*")
-      (deft)
+    (deft)
     (superdeft))
-  (let ((file (widget-get (widget-at) :tag)))
-   (org-log-here file)))
+   (org-log-here (widget-get (widget-at) :tag)))
 
-(defun org-log-here (&optional path)
-  (interactive)
-  (unless path (setq path (buffer-file-name)))
-  (if path (find-file path))
-  (if (and path (eq major-mode 'org-mode))
-      (setq org-capture-templates
-            (list
-             (list
-              "l"
-              (format "log: %s" (file-name-sans-extension
-                                 (file-name-nondirectory path)))
-              'entry (list 'file+datetree+prompt path)
-              "* %?\n :PROPERTIES:\n :DATE:\t%^T\n :END:\n\n%i\n")))
-    (setq org-capture-templates '()))
-  (setq org-capture-templates
-        (append org-capture-templates
-                (list
-                 (list
-                  "d" "diary" 'entry
-                  (list 'file+datetree+prompt
-                        (concat iz-log-dir "0_PRIVATE/DIARY.org"))
-                  "* %?\n :PROPERTIES:\n :DATE:\t%^T\n :END:\n\n%i\n")
-                 (list
-                  "s" "sudel" 'entry
-                  (list 'file+datetree+prompt
-                        (concat iz-log-dir "6_WEBSITES-ORG/SUDEL.org"))
-                  "* %?\n :PROPERTIES:\n :DATE:\t%^T\n :END:\n\n%i\n"))))
-  (org-capture))
-
+(defun org-log-here (file)
+  "Create org-capture entry with date in FILE."
+  (when file
+    (setq org-capture-templates
+          (list
+           (list
+            "l"
+            (format "log: %s" (file-name-sans-extension
+                               (file-name-nondirectory file)))
+            'entry (list 'file+datetree+prompt file)
+            "* %?\n :PROPERTIES:\n :DATE:\t%^T\n :END:\n\n%i\n")
+           (list
+            "d" "diary" 'entry
+            (list 'file+datetree+prompt
+                  (concat iz-log-dir "0_PRIVATE/DIARY.org"))
+            "* %?\n :PROPERTIES:\n :DATE:\t%^T\n :END:\n\n%i\n")
+           (list
+            "s" "sudel" 'entry
+            (list 'file+datetree+prompt
+                  (concat iz-log-dir "6_WEBSITES-ORG/SUDEL.org"))
+            "* %?\n :PROPERTIES:\n :DATE:\t%^T\n :END:\n\n%i\n")))
+    (org-capture)))
 (global-set-key (kbd "C-S-s") 'superdeft)
+(global-set-key (kbd "C-S-d") 'superdeft)
 (global-set-key (kbd "C-S-l") 'deft-log)
-(global-set-key (kbd "H-l") 'org-log-here)
 
 (provide 'org-notes)
