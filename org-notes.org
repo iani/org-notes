@@ -609,8 +609,10 @@
       (superdeft))
      (org-log-here (widget-get (widget-at) :tag)))
 
-  (defun org-log-here (file)
+  (defun org-log-here (&optional file)
     "Create org-capture entry with date in FILE."
+    (interactive)
+    (unless file (setq file (buffer-file-name (current-buffer))))
     (when file
       (setq org-capture-templates
             (list
