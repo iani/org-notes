@@ -18,27 +18,27 @@
 
 (setq diary-file (concat iz-log-dir "PRIVATE/diary"))
 
-(defadvice org-agenda (before update-agenda-file-list ())
-  "Re-createlist of agenda files from contents of relevant directories."
-  (iz-update-agenda-file-list)
-  (icicle-mode 1))
+;; (defadvice org-agenda (before update-agenda-file-list ())
+;;   "Re-createlist of agenda files from contents of relevant directories."
+;;   (iz-update-agenda-file-list)
+;;   (icicle-mode 1))
 
-(defadvice org-agenda (after turn-icicles-off ())
-  "Turn off icicle mode since it interferes with some other keyboard shortcuts."
-  (icicle-mode -1))
+;; (defadvice org-agenda (after turn-icicles-off ())
+;;   "Turn off icicle mode since it interferes with some other keyboard shortcuts."
+;;   (icicle-mode -1))
 
-(ad-activate 'org-agenda)
+;; (ad-activate 'org-agenda)
 
-(defadvice org-refile (before turn-icicles-on-for-refile ())
-  "Turn on icicles before running org-refile.
-Note: This piece of advice needs checking! Maybe not valid."
-  (icicle-mode 1))
+;; (defadvice org-refile (before turn-icicles-on-for-refile ())
+;;   "Turn on icicles before running org-refile.
+;; Note: This piece of advice needs checking! Maybe not valid."
+;;   (icicle-mode 1))
 
-(defadvice org-refile (after turn-icicles-off-for-refile ())
-  "Turn off icicle mode since it interferes with some other keyboard shortcuts."
-  (icicle-mode -1))
+;; (defadvice org-refile (after turn-icicles-off-for-refile ())
+;;   "Turn off icicle mode since it interferes with some other keyboard shortcuts."
+;;   (icicle-mode -1))
 
-(ad-activate 'org-refile)
+;; (ad-activate 'org-refile)
 
 (defun iz-diary-entry ()
   "Go to or create diary entry for date entered interactively."
