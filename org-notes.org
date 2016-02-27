@@ -1,5 +1,5 @@
 * note taking framework
-:PROPERTIES:
+:PROPERTIES: 
 :DATE:     <2014-10-14 Tue 18:47>
 :ID:       D2E016DB-670B-4FD9-90C2-3A43C84C7123
 :eval-id:  15
@@ -373,10 +373,10 @@
      iz-capture-template-history-file)
     capt-template)
 
-  (advice-add
-   'org-capture-select-template
-   :filter-return
-   'org-capture-store-template-selection)
+  ;; (advice-add
+  ;;  'org-capture-select-template
+  ;;  :filter-return
+  ;;  'org-capture-store-template-selection)
 
   ;; old version:
   (defun iz-log-old (&optional goto)
@@ -590,13 +590,13 @@
 * Using deft
 
 #+BEGIN_SRC emacs-lisp
-  (defun superdeft ()
+  q(defun superdeft ()
     "Open Deft with a folder selected from the notes directory."
     (interactive)
     (let ((path (concat iz-log-dir (iz-select-folder))))
       (when (and
-           (get-buffer  "*Deft*")
-           (not (equal deft-directory path)))
+             (get-buffer  "*Deft*")
+             (not (equal deft-directory path)))
         (kill-buffer "*Deft*"))
       (setq deft-directory path)
       (deft)))
@@ -605,21 +605,35 @@
     "Capture datetree log entry in current deft file."
     (interactive)
     (if (get-buffer "*Deft*")
-      (deft)
+        (deft)
       (superdeft))
-     (org-log-here (widget-get (widget-at) :tag)))
+    (org-log-here (widget-get (widget-at) :tag)))
 
   (defun org-log-here (&optional file)
     "Create org-capture entry with date in FILE."
     (interactive)
     (unless file (setq file (buffer-file-name (current-buffer))))
+    (message "tihs is the file comming now")
+    (message "yes the file %s" file)
     (when file
       (setq org-capture-templates
             (list
+             ;; (list
+             ;;  "t"
+             ;;  (format "TODO: %s" (file-name-sans-extension
+             ;;                      (file-name-nondirectory file)))
+             ;;  'entry (list 'file+headline file "Tasks")
+             ;;  "* TODO %?\n :PROPERTIES:\n :DATE:\t%U\n :END:\n\n%i\n")
+             ;; TODO: Task entry must yet be edited!w
              (list
-              "l"
-              (format "log: %s" (file-name-sans-extension
-                                 (file-name-nondirectory file)))
+              "t"
+              (format "Task entry: %s" "GOVVV")
+              'entry (list 'file+headline file "Tasks")
+              "* %?\n :PROPERTIES:\n :DATE:\t%U\n :END:\n\n%i\n")
+             (list
+              "j"
+              (format "journal entry: %s" (file-name-sans-extension
+                                         (file-name-nondirectory file)))
               'entry (list 'file+datetree+prompt file)
               "* %?\n :PROPERTIES:\n :DATE:\t%^T\n :END:\n\n%i\n")
              (list
@@ -636,6 +650,8 @@
   (global-set-key (kbd "C-S-s") 'superdeft)
   (global-set-key (kbd "C-S-d") 'superdeft)
   (global-set-key (kbd "C-S-l") 'deft-log)
+
+
 
 #+END_SRC
 

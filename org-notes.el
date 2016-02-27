@@ -366,10 +366,10 @@ of iz-log-dir."
    iz-capture-template-history-file)
   capt-template)
 
-(advice-add
- 'org-capture-select-template
- :filter-return
- 'org-capture-store-template-selection)
+;; (advice-add
+;;  'org-capture-select-template
+;;  :filter-return
+;;  'org-capture-store-template-selection)
 
 ;; old version:
 (defun iz-log-old (&optional goto)
