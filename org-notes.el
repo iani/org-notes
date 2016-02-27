@@ -584,8 +584,8 @@ of iz-log-dir."
   (interactive)
   (let ((path (concat iz-log-dir (iz-select-folder))))
     (when (and
-         (get-buffer  "*Deft*")
-         (not (equal deft-directory path)))
+           (get-buffer  "*Deft*")
+           (not (equal deft-directory path)))
       (kill-buffer "*Deft*"))
     (setq deft-directory path)
     (deft)))
@@ -594,21 +594,29 @@ of iz-log-dir."
   "Capture datetree log entry in current deft file."
   (interactive)
   (if (get-buffer "*Deft*")
-    (deft)
+      (deft)
     (superdeft))
-   (org-log-here (widget-get (widget-at) :tag)))
+  (org-log-here (widget-get (widget-at) :tag)))
 
 (defun org-log-here (&optional file)
   "Create org-capture entry with date in FILE."
   (interactive)
   (unless file (setq file (buffer-file-name (current-buffer))))
+  (message "tihs is the file comming now")
+  (message "yes the file %s" file)
   (when file
-    (setq org-capture-templates
-          (list
+    (setq org-capture-templates  ;;  could use temporary binding with "let" 
+          (list  ;; TODO: rewrite this nested list using ` and ,
            (list
-            "l"
-            (format "log: %s" (file-name-sans-extension
-                               (file-name-nondirectory file)))
+            "t"
+            (format "TODO: %s" (file-name-sans-extension
+                                (file-name-nondirectory file)))
+            'entry (list 'file+headline file "Tasks")
+            "* TODO %?\n :PROPERTIES:\n :DATE:\t%U\n :END:\n\n%i\n")
+           (list
+            "j"
+            (format "journal entry: %s" (file-name-sans-extension
+                                         (file-name-nondirectory file)))
             'entry (list 'file+datetree+prompt file)
             "* %?\n :PROPERTIES:\n :DATE:\t%^T\n :END:\n\n%i\n")
            (list
@@ -622,6 +630,7 @@ of iz-log-dir."
                   (concat iz-log-dir "6_WEBSITES-ORG/SUDEL.org"))
             "* %?\n :PROPERTIES:\n :DATE:\t%^T\n :END:\n\n%i\n")))
     (org-capture)))
+
 (global-set-key (kbd "C-S-s") 'superdeft)
 (global-set-key (kbd "C-S-d") 'superdeft)
 (global-set-key (kbd "C-S-l") 'deft-log)

@@ -590,7 +590,7 @@
 * Using deft
 
 #+BEGIN_SRC emacs-lisp
-  q(defun superdeft ()
+  (defun superdeft ()
     "Open Deft with a folder selected from the notes directory."
     (interactive)
     (let ((path (concat iz-log-dir (iz-select-folder))))
@@ -616,24 +616,18 @@
     (message "tihs is the file comming now")
     (message "yes the file %s" file)
     (when file
-      (setq org-capture-templates
-            (list
-             ;; (list
-             ;;  "t"
-             ;;  (format "TODO: %s" (file-name-sans-extension
-             ;;                      (file-name-nondirectory file)))
-             ;;  'entry (list 'file+headline file "Tasks")
-             ;;  "* TODO %?\n :PROPERTIES:\n :DATE:\t%U\n :END:\n\n%i\n")
-             ;; TODO: Task entry must yet be edited!w
+      (setq org-capture-templates  ;;  could use temporary binding with "let" 
+            (list  ;; TODO: rewrite this nested list using ` and ,
              (list
               "t"
-              (format "Task entry: %s" "GOVVV")
+              (format "TODO: %s" (file-name-sans-extension
+                                  (file-name-nondirectory file)))
               'entry (list 'file+headline file "Tasks")
-              "* %?\n :PROPERTIES:\n :DATE:\t%U\n :END:\n\n%i\n")
+              "* TODO %?\n :PROPERTIES:\n :DATE:\t%U\n :END:\n\n%i\n")
              (list
               "j"
               (format "journal entry: %s" (file-name-sans-extension
-                                         (file-name-nondirectory file)))
+                                           (file-name-nondirectory file)))
               'entry (list 'file+datetree+prompt file)
               "* %?\n :PROPERTIES:\n :DATE:\t%^T\n :END:\n\n%i\n")
              (list
@@ -647,12 +641,10 @@
                     (concat iz-log-dir "6_WEBSITES-ORG/SUDEL.org"))
               "* %?\n :PROPERTIES:\n :DATE:\t%^T\n :END:\n\n%i\n")))
       (org-capture)))
+
   (global-set-key (kbd "C-S-s") 'superdeft)
   (global-set-key (kbd "C-S-d") 'superdeft)
   (global-set-key (kbd "C-S-l") 'deft-log)
-
-
-
 #+END_SRC
 
 * Provide package org-notes
