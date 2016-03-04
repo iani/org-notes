@@ -598,7 +598,7 @@ of iz-log-dir."
     (superdeft))
   (org-log-here (widget-get (widget-at) :tag)))
 
-(defun org-log-here (&optional file)
+(defun org-log-here (&optional file do-not-capture)
   "Create org-capture entry with date in FILE."
   (interactive)
   (unless file (setq file (buffer-file-name (current-buffer))))
@@ -629,7 +629,7 @@ of iz-log-dir."
             (list 'file+datetree+prompt
                   (concat iz-log-dir "6_WEBSITES-ORG/SUDEL.org"))
             "* %?\n :PROPERTIES:\n :DATE:\t%^T\n :END:\n\n%i\n")))
-    (org-capture)))
+    (unless do-not-capture (org-capture))))
 
 (global-set-key (kbd "C-S-s") 'superdeft)
 (global-set-key (kbd "C-S-d") 'superdeft)
