@@ -609,6 +609,13 @@
       (superdeft))
     (org-log-here (widget-get (widget-at) :tag)))
 
+  (defun org-agenda-here ()
+    "Open agenda restricted to current org-mode file."
+    (interactive)
+    (setq org-agenda-files (list (buffer-file-name)))
+    (org-log-here (buffer-file-name) t)
+    (org-agenda))
+
   (defun org-log-here (&optional file do-not-capture)
     "Create org-capture entry with date in FILE."
     (interactive)

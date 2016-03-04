@@ -598,6 +598,13 @@ of iz-log-dir."
     (superdeft))
   (org-log-here (widget-get (widget-at) :tag)))
 
+(defun org-agenda-here ()
+  "Open agenda restricted to current org-mode file."
+  (interactive)
+  (setq org-agenda-files (list (buffer-file-name)))
+  (org-log-here (buffer-file-name) t)
+  (org-agenda))
+
 (defun org-log-here (&optional file do-not-capture)
   "Create org-capture entry with date in FILE."
   (interactive)
@@ -605,7 +612,7 @@ of iz-log-dir."
   (message "tihs is the file comming now")
   (message "yes the file %s" file)
   (when file
-    (setq org-capture-templates  ;;  could use temporary binding with "let" 
+    (setq org-capture-templates
           (list  ;; TODO: rewrite this nested list using ` and ,
            (list
             "t"
