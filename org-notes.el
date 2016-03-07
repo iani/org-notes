@@ -642,4 +642,12 @@ of iz-log-dir."
 (global-set-key (kbd "C-S-d") 'superdeft)
 (global-set-key (kbd "C-S-l") 'deft-log)
 
+(defun org-quick-capture ()
+  "Capture in a default file."
+  (interactive)
+  (find-file (concat iz-log-dir "000_INBOX.org"))
+  (org-log-here))
+
+(global-set-key (kbd "C-c C-h c") 'org-quick-capture)
+
 (provide 'org-notes)
