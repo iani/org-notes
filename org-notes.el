@@ -2,14 +2,14 @@
 (setq org-clock-persist 'history)
 (org-clock-persistence-insinuate)
 
-(setq org-tag-alist
-      '(
-        ("home" . ?h)
-        ("finance" . ?f)
-        ("eastn" . ?e)
-        ("avarts" . ?a)
-        ("erasmus" . ?E)
-        ("researchfunding" . ?r)))
+;; (setq org-tag-alist
+;;       '(
+;;         ("home" . ?h)
+;;         ("finance" . ?f)
+;;         ("eastn" . ?e)
+;;         ("avarts" . ?a)
+;;         ("erasmus" . ?E)
+;;         ("researchfunding" . ?r)))
 
 (defcustom iz-log-dir
   (expand-file-name
