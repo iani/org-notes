@@ -2,21 +2,21 @@
 (setq org-clock-persist 'history)
 (org-clock-persistence-insinuate)
 
-;; (setq org-tag-alist
-;;       '(
-;;         ("home" . ?h)
-;;         ("finance" . ?f)
-;;         ("eastn" . ?e)
-;;         ("avarts" . ?a)
-;;         ("erasmus" . ?E)
-;;         ("researchfunding" . ?r)))
+(setq org-tag-alist
+      '(
+        ("home" . ?h)
+        ("finance" . ?f)
+        ("eastn" . ?e)
+        ("avarts" . ?a)
+        ("erasmus" . ?E)
+        ("researchfunding" . ?r)))
 
 (defcustom iz-log-dir
   (expand-file-name
    "~/MEGA/000WORKFILES/")
   "This directory contains all notes on current projects and classes")
 
-(setq diary-file (concat iz-log-dir "PRIVATE/diary"))
+(setq diary-file (concat iz-log-dir "PERSONAL/agenda"))
 
 ;; (defadvice org-agenda (before update-agenda-file-list ())
 ;;   "Re-createlist of agenda files from contents of relevant directories."
@@ -609,8 +609,6 @@ of iz-log-dir."
   "Create org-capture entry with date in FILE."
   (interactive)
   (unless file (setq file (buffer-file-name (current-buffer))))
-  (message "tihs is the file comming now")
-  (message "yes the file %s" file)
   (when file
     (setq org-capture-templates
           (list  ;; TODO: rewrite this nested list using ` and ,
@@ -629,7 +627,7 @@ of iz-log-dir."
            (list
             "d" "diary" 'entry
             (list 'file+datetree+prompt
-                  (concat iz-log-dir "0_PRIVATE/DIARY.org"))
+                  (concat iz-log-dir "PERSONAL/DIARY.org"))
             "* %?\n :PROPERTIES:\n :DATE:\t%^T\n :END:\n\n%i\n")
            (list
             "s" "sudel" 'entry
