@@ -9,19 +9,27 @@
   (setq org-clock-persist 'history)
   (org-clock-persistence-insinuate)
 
-  (setq org-tag-alist
-        '(
-          ("home" . ?h)
-          ("finance" . ?f)
-          ("eastn" . ?e)
-          ("avarts" . ?a)
-          ("erasmus" . ?E)
-          ("researchfunding" . ?r)))
+  ;; (setq org-tag-alist
+  ;;       '(
+  ;;         ("home" . ?h)
+  ;;         ("finance" . ?f)
+  ;;         ("eastn" . ?e)
+  ;;         ("avarts" . ?a)
+  ;;         ("erasmus" . ?E)
+  ;;         ("researchfunding" . ?r)))
 
   (defcustom iz-log-dir
     (expand-file-name
      "~/MEGA/000WORKFILES/")
     "This directory contains all notes on current projects and classes")
+
+  (defcustom org-diary-file
+    "PERSONAL/DIARY.org"
+    "Path to main org diary file, relative to log dir.")
+
+  (defcustom org-todo-file
+    "PERSONAL/TODO/TODO.org"
+    "Path to main TODO file, relative to log dir.")
 
   (setq diary-file (concat iz-log-dir "PERSONAL/agenda"))
 
@@ -50,7 +58,7 @@
   (defun iz-diary-entry ()
     "Go to or create diary entry for date entered interactively."
     (interactive)
-    (find-file (concat iz-log-dir "0_PRIVATE/DIARY.org"))
+    (find-file (concat iz-log-dir org-diary-file))
     (org-datetree-find-date-create
      (calendar-gregorian-from-absolute
       (org-time-string-to-absolute (org-read-date))))
@@ -610,46 +618,58 @@
     (org-log-here (widget-get (widget-at) :tag)))
 
   (defun org-agenda-here ()
-    "Open agenda restricted to current org-mode file."
+    "Open agenda in week view mode."
     (interactive)
-    (setq org-agenda-files (list (buffer-file-name)))
-    (org-log-here (buffer-file-name) t)
-    (org-agenda))
+    ;; (setq org-agenda-files (list (buffer-file-name)))
+    ;; (org-log-here (buffer-file-name) t)
+    (org-agenda nil "a"))
 
   (defun org-log-here (&optional file do-not-capture)
-    "Create org-capture entry with date in FILE."
+    "Create org-capture todo or date entries in FILE, or default files."
     (interactive)
-    (unless file (setq file (buffer-file-name (current-buffer))))
-    (when file
+    (let ((journal (concat iz-log-dir org-diary-file))
+          (todos (concat iz-log-dir org-todo-file)))
       (setq org-capture-templates
-            (list  ;; TODO: rewrite this nested list using ` and ,
+            (list ;; TODO: rewrite this nested list using ` and ,
              (list
               "t"
               (format "TODO: %s" (file-name-sans-extension
-                                  (file-name-nondirectory file)))
-              'entry (list 'file+headline file "Tasks")
+                                  (file-name-nondirectory todos)))
+              'entry (list 'file+headline todos "Tasks")
               "* TODO %?\n :PROPERTIES:\n :DATE:\t%U\n :END:\n\n%i\n")
              (list
-              "j"
-              (format "journal entry: %s" (file-name-sans-extension
-                                           (file-name-nondirectory file)))
-              'entry (list 'file+datetree+prompt file)
-              "* %?\n :PROPERTIES:\n :DATE:\t%^T\n :END:\n\n%i\n")
-             (list
-              "d" "diary" 'entry
-              (list 'file+datetree+prompt
-                    (concat iz-log-dir "PERSONAL/DIARY.org"))
-              "* %?\n :PROPERTIES:\n :DATE:\t%^T\n :END:\n\n%i\n")
-             (list
-              "s" "sudel" 'entry
-              (list 'file+datetree+prompt
-                    (concat iz-log-dir "6_WEBSITES-ORG/SUDEL.org"))
+              "d"
+              (format "diary entry: %s" (file-name-sans-extension
+                                         (file-name-nondirectory journal)))
+              'entry (list 'file+datetree+prompt journal)
               "* %?\n :PROPERTIES:\n :DATE:\t%^T\n :END:\n\n%i\n")))
+      (if (and (not file) (eq major-mode 'org-mode) (buffer-file-name (current-buffer)))
+        (setq file (buffer-file-name (current-buffer))))
+      (when file
+        (setq org-capture-templates
+              (append
+               (list ;; TODO: rewrite this nested list using ` and ,
+                (list
+                 "T"
+                 (format "TODO: %s" (file-name-sans-extension
+                                     (file-name-nondirectory file)))
+                 'entry (list 'file+headline file "Tasks")
+                 "* TODO %?\n :PROPERTIES:\n :DATE:\t%U\n :END:\n\n%i\n")
+                (list
+                 "D"
+                 (format "diary entry: %s" (file-name-sans-extension
+                                            (file-name-nondirectory file)))
+                 'entry (list 'file+datetree+prompt file)
+                 "* %?\n :PROPERTIES:\n :DATE:\t%^T\n :END:\n\n%i\n"))
+               org-capture-templates)))
       (unless do-not-capture (org-capture))))
 
   (global-set-key (kbd "C-S-s") 'superdeft)
   (global-set-key (kbd "C-S-d") 'superdeft)
   (global-set-key (kbd "C-S-l") 'deft-log)
+  (global-set-key (kbd "C-c c a") 'org-agenda-here)
+  (global-set-key (kbd "C-c c l") 'org-log-here)
+
 #+END_SRC
 
 * Org quick capture
