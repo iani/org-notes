@@ -617,33 +617,31 @@ of iz-log-dir."
   "Create org-capture todo or date entries in FILE, or default files."
   (interactive)
   (let ((journal (concat iz-log-dir org-diary-file))
-        (todos (concat iz-log-dir org-todo-file))
+        (todos (concat iz-log-dir org-diary-file)) ;; use same file for the moment
+        entry-string 
         (tag ""))
     (when (and (not file) (eq major-mode 'org-mode) (buffer-file-name (current-buffer)))
       (setq file (buffer-file-name (current-buffer)))
-      (setq tag (format "\t:%s:" (file-name-sans-extension
-                                  (file-name-nondirectory file)))))
+      (setq tag (format "\t:%s:" (file-name-base file))))
     (setq org-capture-templates
           (list ;; TODO: rewrite this nested list using ` and ,
            (list
             "t"
-            (format "TODO: %s with tag: %s"
-                    (file-name-sans-extension (file-name-nondirectory todos))
-                    tag)
+            (format "TODO: %s with tag: %s" (file-name-base todos) tag)
             'entry (list 'file+headline todos "Tasks")
-            (concat "* TODO %?"
-                    tag
-                    "\n :PROPERTIES:\n :DATE:\t%U\n :END:\n\n%i\n"))
+            (concat "* TODO %?" tag
+                    (concat
+                     "\n :PROPERTIES:\n :DATE:\t%U\n :SOURCE_FILE: "
+                     file
+                     "\n :END:\n\n%i\n")))
            (list
             "d"
-            (format "diary entry: %s with tag: %s"
-                    (file-name-sans-extension (file-name-nondirectory journal))
-                    tag)
+            (format "diary entry: %s with tag: %s" (file-name-base file) tag)
             'entry (list 'file+datetree+prompt journal)
-            (concat
-             "* %?"
-             tag
-             "\n :PROPERTIES:\n :DATE:\t%^T\n :END:\n\n%i\n"))))
+            (concat "* %?" tag (concat
+                                "\n :PROPERTIES:\n :DATE:\t%T\n :SOURCE_FILE: "
+                                file
+                                "\n :END:\n\n%i\n")))))
     (when file
       (setq org-capture-templates
             (append
@@ -651,17 +649,30 @@ of iz-log-dir."
              (list ;; TODO: rewrite this nested list using ` and ,
               (list
                "T"
-               (format "TODO: %s" (file-name-sans-extension
-                                   (file-name-nondirectory file)))
+               (format "TODO: %s" (file-name-base file))
                'entry (list 'file+headline file "Tasks")
                "* TODO %?\n :PROPERTIES:\n :DATE:\t%U\n :END:\n\n%i\n")
               (list
                "D"
-               (format "diary entry: %s" (file-name-sans-extension
-                                          (file-name-nondirectory file)))
+               (format "diary entry: %s" (file-name-base file))
                'entry (list 'file+datetree+prompt file)
                "* %?\n :PROPERTIES:\n :DATE:\t%^T\n :END:\n\n%i\n")))))
     (unless do-not-capture (org-capture))))
+
+(defun org-agenda-include-source-file (remove)
+  "If property FILE is defined, then add the path stored in FILE to the agenda file list.
+REMOVE not yet implemented!
+If called with prefix-argument, remove that file instead."
+  (interactive "P")
+  (org-agenda-switch-to)
+  (let ((file (org-entry-get (point) "SOURCE_FILE")))
+    (if (and file (file-exists-p file))
+        (add-to-list 'org-agenda-files file)
+      (message "File not found! %s" file))
+   (org-agenda nil "a")
+   (switch-to-buffer "*Org Agenda*")))
+
+;; (org-agenda-add-file "/Users/iani/MEGA/000WORKFILES/1_PROJECTS_CURRENT/JOINT_PROJECTS_IU/EASTM.org")
 
 (global-set-key (kbd "C-S-s") 'superdeft)
 (global-set-key (kbd "C-S-d") 'superdeft)
