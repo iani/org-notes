@@ -617,26 +617,37 @@ of iz-log-dir."
   "Create org-capture todo or date entries in FILE, or default files."
   (interactive)
   (let ((journal (concat iz-log-dir org-diary-file))
-        (todos (concat iz-log-dir org-todo-file)))
+        (todos (concat iz-log-dir org-todo-file))
+        (tag ""))
+    (when (and (not file) (eq major-mode 'org-mode) (buffer-file-name (current-buffer)))
+      (setq file (buffer-file-name (current-buffer)))
+      (setq tag (format "\t:%s:" (file-name-sans-extension
+                                  (file-name-nondirectory file)))))
     (setq org-capture-templates
           (list ;; TODO: rewrite this nested list using ` and ,
            (list
             "t"
-            (format "TODO: %s" (file-name-sans-extension
-                                (file-name-nondirectory todos)))
+            (format "TODO: %s with tag: %s"
+                    (file-name-sans-extension (file-name-nondirectory todos))
+                    tag)
             'entry (list 'file+headline todos "Tasks")
-            "* TODO %?\n :PROPERTIES:\n :DATE:\t%U\n :END:\n\n%i\n")
+            (concat "* TODO %?"
+                    tag
+                    "\n :PROPERTIES:\n :DATE:\t%U\n :END:\n\n%i\n"))
            (list
             "d"
-            (format "diary entry: %s" (file-name-sans-extension
-                                       (file-name-nondirectory journal)))
+            (format "diary entry: %s with tag: %s"
+                    (file-name-sans-extension (file-name-nondirectory journal))
+                    tag)
             'entry (list 'file+datetree+prompt journal)
-            "* %?\n :PROPERTIES:\n :DATE:\t%^T\n :END:\n\n%i\n")))
-    (if (and (not file) (eq major-mode 'org-mode) (buffer-file-name (current-buffer)))
-      (setq file (buffer-file-name (current-buffer))))
+            (concat
+             "* %?"
+             tag
+             "\n :PROPERTIES:\n :DATE:\t%^T\n :END:\n\n%i\n"))))
     (when file
       (setq org-capture-templates
             (append
+             org-capture-templates
              (list ;; TODO: rewrite this nested list using ` and ,
               (list
                "T"
@@ -649,8 +660,7 @@ of iz-log-dir."
                (format "diary entry: %s" (file-name-sans-extension
                                           (file-name-nondirectory file)))
                'entry (list 'file+datetree+prompt file)
-               "* %?\n :PROPERTIES:\n :DATE:\t%^T\n :END:\n\n%i\n"))
-             org-capture-templates)))
+               "* %?\n :PROPERTIES:\n :DATE:\t%^T\n :END:\n\n%i\n")))))
     (unless do-not-capture (org-capture))))
 
 (global-set-key (kbd "C-S-s") 'superdeft)
