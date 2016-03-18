@@ -595,7 +595,7 @@
             ))))
 #+END_SRC
 
-* Using deft
+* COMMENT Using deft
 
 #+BEGIN_SRC emacs-lisp
   (defun superdeft ()
@@ -683,6 +683,7 @@
      (org-agenda nil "a")
      (switch-to-buffer "*Org Agenda*")))
 
+  (define-key org-agenda-mode-map "&" 'org-agenda-include-source-file)
   ;; (org-agenda-add-file "/Users/iani/MEGA/000WORKFILES/1_PROJECTS_CURRENT/JOINT_PROJECTS_IU/EASTM.org")
 
   (global-set-key (kbd "C-S-s") 'superdeft)
@@ -690,7 +691,6 @@
   (global-set-key (kbd "C-S-l") 'deft-log)
   (global-set-key (kbd "C-c c a") 'org-agenda-here)
   (global-set-key (kbd "C-c c l") 'org-log-here)
-
 #+END_SRC
 
 * Org quick capture
