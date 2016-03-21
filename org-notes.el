@@ -672,6 +672,7 @@ If called with prefix-argument, remove that file instead."
    (org-agenda nil "a")
    (switch-to-buffer "*Org Agenda*")))
 
+(define-key org-agenda-mode-map "&" 'org-agenda-include-source-file)
 ;; (org-agenda-add-file "/Users/iani/MEGA/000WORKFILES/1_PROJECTS_CURRENT/JOINT_PROJECTS_IU/EASTM.org")
 
 (global-set-key (kbd "C-S-s") 'superdeft)
