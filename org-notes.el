@@ -631,7 +631,7 @@ of iz-log-dir."
             'entry (list 'file+headline todos "Tasks")
             (concat "* TODO %?" tag
                     (concat
-                     "\n :PROPERTIES:\n :DATE:\t%U\n :SOURCE_FILE: "
+                     "\n :PROPERTIES:\n :DATE:\t%U\n :SOURCE_FILE: file:"
                      file
                      "\n :END:\n\n%i\n")))
            (list
@@ -639,7 +639,7 @@ of iz-log-dir."
             (format "diary entry: %s with tag: %s" (file-name-base file) tag)
             'entry (list 'file+datetree+prompt journal)
             (concat "* %?" tag (concat
-                                "\n :PROPERTIES:\n :DATE:\t%T\n :SOURCE_FILE: "
+                                "\n :PROPERTIES:\n :DATE:\t%T\n :SOURCE_FILE: file:"
                                 file
                                 "\n :END:\n\n%i\n")))))
     (when file
@@ -666,7 +666,8 @@ If called with prefix-argument, remove that file instead."
   (interactive "P")
   (org-agenda-switch-to)
   (let ((file (org-entry-get (point) "SOURCE_FILE")))
-    (if (and file (file-exists-p file))
+    (if (and file (file-exists-p
+                   (setq file (replace-regexp-in-string "^file:" "" file))))
         (add-to-list 'org-agenda-files file)
       (message "File not found! %s" file))
    (org-agenda nil "a")
