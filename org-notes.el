@@ -676,8 +676,8 @@ If called with prefix-argument, remove that file instead."
 (define-key org-agenda-mode-map "&" 'org-agenda-include-source-file)
 ;; (org-agenda-add-file "/Users/iani/MEGA/000WORKFILES/1_PROJECTS_CURRENT/JOINT_PROJECTS_IU/EASTM.org")
 
-(global-set-key (kbd "C-S-s") 'superdeft)
-(global-set-key (kbd "C-S-d") 'superdeft)
+;; (global-set-key (kbd "C-S-s") 'superdeft)
+;; (global-set-key (kbd "C-S-d") 'superdeft)
 (global-set-key (kbd "C-S-l") 'deft-log)
 (global-set-key (kbd "C-c c a") 'org-agenda-here)
 (global-set-key (kbd "C-c c l") 'org-log-here)
