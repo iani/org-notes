@@ -679,15 +679,13 @@ If called with prefix-argument, remove that file instead."
 ;; (global-set-key (kbd "C-S-s") 'superdeft)
 ;; (global-set-key (kbd "C-S-d") 'superdeft)
 (global-set-key (kbd "C-S-l") 'deft-log)
-(global-set-key (kbd "C-c c a") 'org-agenda-here)
-(global-set-key (kbd "C-c c l") 'org-log-here)
+(global-set-key (kbd "C-c q a") 'org-agenda-here)
+(global-set-key (kbd "C-c q l") 'org-log-here)
 
-(defun org-quick-capture ()
-  "Capture in a default file."
-  (interactive)
-  (find-file (concat iz-log-dir "000_INBOX.org"))
-  (org-log-here))
+(defun org-capture-add-cache ()
+  (message "THIS IS THE BUFFER %s\n" (buffer-name))
+  (message "THIS IS THE FILE %s\n" file))
 
-(global-set-key (kbd "C-c q") 'org-quick-capture)
+(add-hook 'org-capture-prepare-finalize-hook 'org-capture-add-cache)
 
 (provide 'org-notes)

@@ -692,9 +692,21 @@
   (global-set-key (kbd "C-S-l") 'deft-log)
   (global-set-key (kbd "C-c q a") 'org-agenda-here)
   (global-set-key (kbd "C-c q l") 'org-log-here)
-
-  ()
 #+END_SRC
+
+* Experimental: auto-log of capture to diary
+:PROPERTIES:
+:DATE:     <2016-03-27 Sun 12:33>
+:END:
+
+#+BEGIN_SRC emacs-lisp
+  (defun org-capture-add-cache ()
+    (message "THIS IS THE BUFFER %s\n" (buffer-name))
+    (message "THIS IS THE FILE %s\n" file))
+
+  (add-hook 'org-capture-prepare-finalize-hook 'org-capture-add-cache)
+#+END_SRC
+
 
 * Provide package org-notes
 
