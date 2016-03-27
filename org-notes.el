@@ -613,22 +613,27 @@ of iz-log-dir."
   ;; (org-log-here (buffer-file-name) t)
   (org-agenda nil "a"))
 
-(defun org-log-here (&optional file do-not-capture)
+(defun org-capture-here ()
   "Create org-capture todo or date entries in FILE, or default files."
   (interactive)
-  (let ((journal (concat iz-log-dir org-diary-file))
+  (message "AT THE START IT WAS: %s" (buffer-file-name))
+  (let* ((journal (concat iz-log-dir org-diary-file))
         (todos (concat iz-log-dir org-diary-file)) ;; use same file for the moment
         entry-string 
-        (tag ""))
-    (when (and (not file) (eq major-mode 'org-mode) (buffer-file-name (current-buffer)))
-      (setq file (buffer-file-name (current-buffer)))
-      (setq tag (format "\t:%s:" (file-name-base file))))
+        (file (if (and (eq major-mode 'org-mode) (buffer-file-name (current-buffer)))
+                  (buffer-file-name (current-buffer))
+                (file-truename (concat iz-log-dir org-diary-file))))
+        (file-base (file-name-base file))
+        (tag (format "\t:%s:" (file-name-base file))))
+    (message "MAJOR MODE %s" major-mode)
+    (message "buffer-file-name is: %s" buffer-file-name)
+    (setq org-capture-current-file file) ;; TODO: Global variable. Let?
     (setq org-capture-templates
           (list ;; TODO: rewrite this nested list using ` and ,
            (list
             "t"
-            (format "TODO: %s with tag: %s" (file-name-base todos) tag)
-            'entry (list 'file+headline todos "Tasks")
+            (format "TODO: %s" file-base)
+            'entry (list 'file+headline file "Tasks")
             (concat "* TODO %?" tag
                     (concat
                      "\n :PROPERTIES:\n :DATE:\t%U\n :SOURCE_FILE: file:"
@@ -636,28 +641,13 @@ of iz-log-dir."
                      "\n :END:\n\n%i\n")))
            (list
             "d"
-            (format "diary entry: %s with tag: %s" (file-name-base file) tag)
+            (format "DIARY ENTRY: %s" file-base)
             'entry (list 'file+datetree+prompt journal)
             (concat "* %?" tag (concat
                                 "\n :PROPERTIES:\n :DATE:\t%T\n :SOURCE_FILE: file:"
                                 file
                                 "\n :END:\n\n%i\n")))))
-    (when file
-      (setq org-capture-templates
-            (append
-             org-capture-templates
-             (list ;; TODO: rewrite this nested list using ` and ,
-              (list
-               "T"
-               (format "TODO: %s" (file-name-base file))
-               'entry (list 'file+headline file "Tasks")
-               "* TODO %?\n :PROPERTIES:\n :DATE:\t%U\n :END:\n\n%i\n")
-              (list
-               "D"
-               (format "diary entry: %s" (file-name-base file))
-               'entry (list 'file+datetree+prompt file)
-               "* %?\n :PROPERTIES:\n :DATE:\t%^T\n :END:\n\n%i\n")))))
-    (unless do-not-capture (org-capture))))
+    (org-capture)))
 
 (defun org-agenda-include-source-file (remove)
   "If property FILE is defined, then add the path stored in FILE to the agenda file list.
@@ -680,11 +670,34 @@ If called with prefix-argument, remove that file instead."
 ;; (global-set-key (kbd "C-S-d") 'superdeft)
 (global-set-key (kbd "C-S-l") 'deft-log)
 (global-set-key (kbd "C-c q a") 'org-agenda-here)
-(global-set-key (kbd "C-c q l") 'org-log-here)
+(global-set-key (kbd "C-c q c") 'org-capture-here)
 
 (defun org-capture-add-cache ()
   (message "THIS IS THE BUFFER %s\n" (buffer-name))
-  (message "THIS IS THE FILE %s\n" file))
+  (message "THIS IS THE FILE %s\n" (buffer-file-name))
+  (let* (
+
+         (heading-components (org-heading-components))
+         (heading (nth 4 heading-components))
+         (tags (nth 5 heading-components))
+         (source-file org-capture-current-file)
+         (id (org-id-get-create))
+         (date (org-entry-get (point) "DATE")))
+    (save-excursion
+      (find-file (file-truename (concat iz-log-dir org-diary-file)))
+      (end-of-buffer)
+      (insert-string
+       (format "\n\n* %s\t %s\n :PROPERTIES:\n :DATE: %s\n :SOURCE_FILE: %s\n :END:\n\n"
+               heading
+               tags
+               date
+               source-file))
+      (insert-string
+       (format "\n- LINK TO HEADING: [[id:%s][%s]]\n- LINK TO FILE: file:%s\n"
+               id
+               source-file
+               source-file))
+      (org-edit-src-save))))
 
 (add-hook 'org-capture-prepare-finalize-hook 'org-capture-add-cache)
 
