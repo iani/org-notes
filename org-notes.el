@@ -688,6 +688,6 @@ If called with prefix-argument, remove that file instead."
   (find-file (concat iz-log-dir "000_INBOX.org"))
   (org-log-here))
 
-(global-set-key (kbd "C-c C-h c") 'org-quick-capture)
+(global-set-key (kbd "C-c q") 'org-quick-capture)
 
 (provide 'org-notes)

@@ -690,20 +690,10 @@
   ;; (global-set-key (kbd "C-S-s") 'superdeft)
   ;; (global-set-key (kbd "C-S-d") 'superdeft)
   (global-set-key (kbd "C-S-l") 'deft-log)
-  (global-set-key (kbd "C-c c a") 'org-agenda-here)
-  (global-set-key (kbd "C-c c l") 'org-log-here)
-#+END_SRC
+  (global-set-key (kbd "C-c q a") 'org-agenda-here)
+  (global-set-key (kbd "C-c q l") 'org-log-here)
 
-* Org quick capture
-
-#+BEGIN_SRC emacs-lisp
-  (defun org-quick-capture ()
-    "Capture in a default file."
-    (interactive)
-    (find-file (concat iz-log-dir "000_INBOX.org"))
-    (org-log-here))
-
-  (global-set-key (kbd "C-c C-h c") 'org-quick-capture)
+  ()
 #+END_SRC
 
 * Provide package org-notes
