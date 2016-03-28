@@ -1,10 +1,11 @@
 A framework for taking notes with Org-mode, in multiple files and multiple folders, under one main folder.
 
-Developed in November 2014, tested with 6 months intense use.
+* Notes
 
-Originally included in my emacs init-file.  Here saved as separate library.
+- Diary entries are saved on each individual files, and a reference copy is placed in a central file DIARY from which the agenda is created.
+- TODO entires are entered in the diary file only, with a link to the file of the project to which they belong.  A command will be defined to refile entries marked as DONE to the project files to which they belong. 
 
-El-get recipe:
+* El-get recipe:
 
 #+BEGIN_SRC elisp
 (:name org-pm :url "http://github.com/iani/org-notes.git" :type git :features
