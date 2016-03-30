@@ -604,7 +604,8 @@ of iz-log-dir."
   (if (get-buffer "*Deft*")
       (deft)
     (superdeft))
-  (org-log-here (widget-get (widget-at) :tag)))
+  ;; (org-log-here (widget-get (widget-at) :tag))
+  )
 
 (defun org-agenda-here ()
   "Open agenda in week view mode."
@@ -642,7 +643,9 @@ of iz-log-dir."
            (list
             "d"
             (format "DIARY ENTRY: %s" file-base)
-            'entry (list 'file+datetree+prompt journal)
+            'entry (list 'file+datetree+prompt file)
+            ;; file+datetree does not work with the capture hoook
+            ;; (list 'file+datetree+prompt journal)
             (concat "* %?" tag (concat
                                 "\n :PROPERTIES:\n :DATE:\t%T\n :SOURCE_FILE: file:"
                                 file
@@ -673,11 +676,7 @@ If called with prefix-argument, remove that file instead."
 (global-set-key (kbd "C-c q c") 'org-capture-here)
 
 (defun org-capture-add-cache ()
-  (message "THIS IS THE BUFFER %s\n" (buffer-name))
-  (message "THIS IS THE FILE %s\n" (buffer-file-name))
-  (let* (
-
-         (heading-components (org-heading-components))
+  (let* ((heading-components (org-heading-components))
          (heading (nth 4 heading-components))
          (tags (nth 5 heading-components))
          (source-file org-capture-current-file)
@@ -687,18 +686,19 @@ If called with prefix-argument, remove that file instead."
       (find-file (file-truename (concat iz-log-dir org-diary-file)))
       (end-of-buffer)
       (insert-string
-       (format "\n\n* %s\t %s\n :PROPERTIES:\n :DATE: %s\n :SOURCE_FILE: %s\n :END:\n\n"
+       (format "\n\n* %s\n :PROPERTIES:\n :DATE: %s\n :SOURCE_FILE: %s\n :END:\n\n"
                heading
-               tags
+               ;; tags
                date
                source-file))
       (insert-string
-       (format "\n- LINK TO HEADING: [[id:%s][%s]]\n- LINK TO FILE: file:%s\n"
+       (format "\n- LINK TO ORIGINAL SECTION: [[id:%s][%s]]\n- LINK TO FILE: file:%s\n"
                id
-               source-file
+               heading
                source-file))
       (org-edit-src-save))))
 
-(add-hook 'org-capture-prepare-finalize-hook 'org-capture-add-cache)
+;; Disabled: Problems
+;; (add-hook 'org-capture-prepare-finalize-hook 'org-capture-add-cache)
 
 (provide 'org-notes)

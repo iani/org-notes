@@ -618,7 +618,8 @@
     (if (get-buffer "*Deft*")
         (deft)
       (superdeft))
-    (org-log-here (widget-get (widget-at) :tag)))
+    ;; (org-log-here (widget-get (widget-at) :tag))
+    )
 
   (defun org-agenda-here ()
     "Open agenda in week view mode."
@@ -656,7 +657,9 @@
              (list
               "d"
               (format "DIARY ENTRY: %s" file-base)
-              'entry (list 'file+datetree+prompt journal)
+              'entry (list 'file+datetree+prompt file)
+              ;; file+datetree does not work with the capture hoook
+              ;; (list 'file+datetree+prompt journal)
               (concat "* %?" tag (concat
                                   "\n :PROPERTIES:\n :DATE:\t%T\n :SOURCE_FILE: file:"
                                   file
@@ -693,6 +696,9 @@
 :ID:       A76A6E7C-8B2A-450E-8D39-645F6B2CA21F
 :END:
 
+
+DISABLED! Problems.
+
 #+BEGIN_SRC emacs-lisp
   (defun org-capture-add-cache ()
     (let* ((heading-components (org-heading-components))
@@ -717,7 +723,8 @@
                  source-file))
         (org-edit-src-save))))
 
-  (add-hook 'org-capture-prepare-finalize-hook 'org-capture-add-cache)
+  ;; Disabled: Problems
+  ;; (add-hook 'org-capture-prepare-finalize-hook 'org-capture-add-cache)
 #+END_SRC
 
 * Provide package org-notes
@@ -725,4 +732,3 @@
 #+BEGIN_SRC emacs-lisp
 (provide 'org-notes)
 #+END_SRC
-* Tasks
