@@ -628,13 +628,14 @@ of iz-log-dir."
         (tag (format "\t:%s:" (file-name-base file))))
     (message "MAJOR MODE %s" major-mode)
     (message "buffer-file-name is: %s" buffer-file-name)
-    (setq org-capture-current-file file) ;; TODO: Global variable. Let?
+    ;; (setq org-capture-current-file file)
+    ;; TODO: Global variable. Let?
     (setq org-capture-templates
           (list ;; TODO: rewrite this nested list using ` and ,
            (list
             "t"
             (format "TODO: %s" file-base)
-            'entry (list 'file+headline file "Tasks")
+            'entry (list 'file+headline todos "Tasks")
             (concat "* TODO %?" tag
                     (concat
                      "\n :PROPERTIES:\n :DATE:\t%U\n :SOURCE_FILE: file:"
@@ -643,7 +644,7 @@ of iz-log-dir."
            (list
             "d"
             (format "DIARY ENTRY: %s" file-base)
-            'entry (list 'file+datetree+prompt file)
+            'entry (list 'file+datetree+prompt journal)
             ;; file+datetree does not work with the capture hoook
             ;; (list 'file+datetree+prompt journal)
             (concat "* %?" tag (concat
