@@ -13,7 +13,7 @@
 
 (defcustom iz-log-dir
   (expand-file-name
-   "~/MEGA/000WORKFILES/")
+   "~/Documents/000WORKFILES/")
   "This directory contains all notes on current projects and classes")
 
 (defcustom org-diary-file
@@ -25,6 +25,40 @@
   "Path to main TODO file, relative to log dir.")
 
 (setq diary-file (concat iz-log-dir "PERSONAL/agenda"))
+
+;; Default capture templates
+
+(setq org-capture-templates
+      '(("t" "Todo" entry (file+datetree+prompt (concat iz-log-dir org-diary-file))
+         ;;; TODOS should have no DATE property active timestamp, so as to show in
+         ;; future dates of agenda TODO view. !
+         "* TODO %?\nEntered on %(concat \"[\"
+                  (substring
+                   (format-time-string (cdr org-time-stamp-formats) (current-time))
+                   1 -1)
+                  \"]\")\n  %i\n%a"
+         ;; Note: We need to use custom sexpr (substring ...) in order to create
+         ;; an inactive timestamp with the current time.  If we use %U instead, then
+         ;; the time of the %U will be the same as that input for %T previously,
+         ;; when the user inputs a custom time value.
+         )        
+        ("j" "Journal" entry (file+datetree+prompt (concat iz-log-dir org-diary-file))
+         "* %?\n :PROPERTIES:\n :DATE: %T\n :END:\nEntered on %(concat \"[\"
+                  (substring
+                   (format-time-string (cdr org-time-stamp-formats) (current-time))
+                   1 -1)
+                  \"]\")\n  %i\n%a")))
+
+(setq org-agenda-files `(,(concat iz-log-dir org-diary-file)))
+
+(global-set-key (kbd "H-c H-c") 'org-capture)
+
+(setq org-agenda-repeating-timestamp-show-all nil)
+
+;; (setq org-agenda-files (list "~/org/work.org"
+;;                              "~/org/school.org" 
+;;                              "~/org/home.org"))
+
 
 ;; (defadvice org-agenda (before update-agenda-file-list ())
 ;;   "Re-createlist of agenda files from contents of relevant directories."
@@ -668,7 +702,7 @@ If called with prefix-argument, remove that file instead."
    (switch-to-buffer "*Org Agenda*")))
 
 (define-key org-agenda-mode-map "&" 'org-agenda-include-source-file)
-;; (org-agenda-add-file "/Users/iani/MEGA/000WORKFILES/1_PROJECTS_CURRENT/JOINT_PROJECTS_IU/EASTM.org")
+;; (org-agenda-add-file "/Users/iani/Documents/000WORKFILES/1_PROJECTS_CURRENT/JOINT_PROJECTS_IU/EASTM.org")
 
 ;; (global-set-key (kbd "C-S-s") 'superdeft)
 ;; (global-set-key (kbd "C-S-d") 'superdeft)
